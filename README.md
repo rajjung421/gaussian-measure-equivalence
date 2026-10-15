@@ -1,7 +1,8 @@
-# Learning notes: Gaussian measures and the equivalence of SPDE priors
+# Learning notes: Gaussian measures, equivalence, and an aquifer prior
 
-Slow, computational notes on when two Gaussian priors are equivalent and when they are mutually
-singular, with SPDE (Matérn-type) priors in mind. The guiding tool is the Feldman–Hájek theorem.
+Slow, computational notes on the mathematics behind a groundwater-prior experiment: when can a
+stationary Gaussian (SPDE) prior be *corrected* to account for wells, leakage, or a conductivity
+lens, and when must the operator itself change? The guiding tool is the Feldman–Hájek theorem.
 
 **Website:** see the GitHub Pages link in the repository sidebar (built from `docs/`).
 
@@ -9,15 +10,15 @@ singular, with SPDE (Matérn-type) priors in mind. The guiding tool is the Feldm
 
 | Chapter | Notebook | Topic |
 |---|---|---|
-| 1 | [`01_feldman_hajek.ipynb`](01_feldman_hajek.ipynb) | Equivalent vs singular Gaussian measures; Kakutani's $\sum t_j^2$ condition; mean shifts and the Cameron–Martin space; range $\kappa$ vs amplitude $\tau$ (microergodicity); a 1D worked example changing the source, a lower-order coefficient and the leading coefficient |
+| 1 | [`01_feldman_hajek.ipynb`](01_feldman_hajek.ipynb) | Equivalent vs singular Gaussian measures; Kakutani's $\sum t_j^2$ condition; mean shifts and the Cameron–Martin space; range $\kappa$ vs amplitude $\tau$ (microergodicity); a 1D leaky-aquifer test with well, leakage and lens |
 
 The written notes are in [`notes.tex`](notes.tex) / [`notes.pdf`](notes.pdf); every figure in them is
 produced by the notebooks (saved to `figs/`).
 
 **Core intuition:** two Gaussian measures are equivalent iff a single, infinitely resolved sample
-cannot tell them apart. Changes that persist to the finest scales (the amplitude, the leading
-coefficient of the operator) are singular; changes confined to coarse scales or lower-order terms
-(the range, smooth sources) are equivalent.
+cannot tell them apart. Changes that persist to the finest scales (amplitude, the conductivity in
+$-\nabla\cdot(K\nabla u)$) are singular; changes confined to coarse scales or lower-order terms
+(range, wells, leakage) are equivalent.
 
 ## Run it
 

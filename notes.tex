@@ -21,14 +21,14 @@
 \newcommand{\KL}{\mathrm{KL}}
 \newcommand{\nb}{\texttt{01\_feldman\_hajek.ipynb}}
 
-\title{Learning notes: Gaussian measures and the equivalence of SPDE priors}
+\title{Learning notes: Gaussian measures, equivalence, and the aquifer prior}
 \author{Raj Mahat}
 \date{Started 14 October 2026 \quad--\quad compiled \today}
 
 \begin{document}
 \maketitle
 
-\noindent These notes go slowly through the mathematics of equivalent and singular Gaussian measures, with SPDE priors in mind.
+\noindent These notes go slowly through the mathematics behind the \texttt{gw\_demarcation} experiment.
 Every figure is produced by a Jupyter notebook in this folder, so each statement can be checked by
 running code. Chapter~1 pairs with \nb.
 
@@ -39,8 +39,8 @@ running code. Chapter~1 pairs with \nb.
 %======================================================================
 
 \paragraph{Why we care.}
-Take a reference prior $P$, the stationary SPDE $(\kappa_0^2-\Delta)u=\xi$, and an alternative $Q$
-that differs from it in some way: a different parameter, an added source, a changed coefficient. Whenever we
+In the project we have a reference prior $P$, the stationary SPDE $(\kappa_0^2-\Delta)u=\xi$, and
+alternatives $Q$ in which wells, a leakage bump, or a conductivity lens are added. Whenever we
 compare, learn, or sample, we implicitly use the density ratio $dQ/dP$: likelihood ratios, KL
 divergences, MCMC acceptance ratios, ``correct the reference by a few directions''. On a fixed
 mesh this ratio always exists. The question is whether it \emph{survives mesh refinement}. If it
@@ -53,10 +53,7 @@ you which of the two produced it. If one perfect sample \emph{can} tell them apa
 mutually singular.
 \end{intuition}
 
-Everything below builds toward this sentence and then checks it with numbers: finite dimensions first,
-then infinitely many coordinates, mean shifts, the theorem itself, random functions, and finally
-(\S\ref{sec:example}) one equation in which an added source, a lower-order coefficient and the leading
-coefficient are changed in turn, and the theorem sorts them.
+Everything below builds toward this sentence and then checks it with numbers.
 
 %----------------------------------------------------------------------
 \subsection{Equivalent and singular measures}
@@ -230,15 +227,15 @@ $H^2$ with boundary conditions. Two consequences follow.
 $(\kappa^2-\Delta)u=\xi$ is white noise, and $\|\xi\|_{L^2}^2=\sum\xi_j^2=\infty$. So shifting the prior by
 one of its own typical draws gives a singular measure. The Cameron--Martin space is much smoother
 than the samples: it has probability zero under $P$.
-\item \textbf{A deterministic source.} A known forcing $q=\xi+a\,g$ shifts the mean by $m=a(\kappa^2-\Delta)^{-1}g$.
+\item \textbf{Deterministic wells.} A known pumping $q=\xi+a\,g$ shifts the mean by $m=a(\kappa^2-\Delta)^{-1}g$.
 Then $\|C^{-1/2}m\|=|a|\,\|g\|_{L^2}$, so the shifted prior is equivalent iff $g\in L^2$. A smooth or
-extended source is fine. A \emph{point} source $g=\delta_{x_0}$ is not in $L^2$ (in any dimension), so its
+extended well is fine. A \emph{point} well $g=\delta_{x_0}$ is not in $L^2$ (in any dimension), so its
 mean shift is singular. On a mesh, $\delta$ becomes a spike of height $1/h^d$ at one node, and
 $\|g\|^2\approx h^{-d}\to\infty$.
 \end{itemize}
-A \emph{random} source amplitude ($a\sim\N(0,c)$) gives the covariance version of the same
+The \emph{random} wells of the project ($a\sim\N(0,c)$) give the covariance version of the same
 condition. In whitened coordinates the added eigenvalue is $t=c\,\|g\|_{L^2}^2$, finite iff
-$g\in L^2$ (on a mesh, $t=c\,h\,g^\top g$).
+$g\in L^2$ (\S\ref{sec:aquifer}: $t=c\,h\,g^\top g$).
 
 \begin{figure}[ht]\centering
 \includegraphics[width=.8\linewidth]{fh04_mean_shift.pdf}
@@ -282,6 +279,7 @@ $P\perp Q$, then $\KL=\infty$.
 \paragraph{The mesh-refinement test.}
 On an $N$-node mesh everything is finite. Compute the $N\times N$ matrix $T_N$ and watch
 $\|T_N\|_F$ and $\KL_N$ as $N$ grows. A plateau means $P\sim Q$. Growth without bound means $P\perp Q$.
+This is the diagnostic used in the main project (figures F1, F2).
 
 %----------------------------------------------------------------------
 \subsection{Random functions: range versus amplitude}\label{sec:range}
@@ -348,14 +346,12 @@ unbounded for $\tau$, bounded for $\kappa$.}
 \label{fig:micro}
 \end{figure}
 
-\paragraph{A practical consequence.} Because $\kappa$ costs almost nothing in likelihood, it is a
-cheap knob for a fit to turn.
+\paragraph{Link to the project.} Because $\kappa$ costs almost nothing in likelihood, it is the
+knob a stationary fit turns to absorb unmodelled large-scale variance. With the wells present, M1
+slid to $\hat\kappa\approx0$.
 
 %----------------------------------------------------------------------
-\subsection{A worked example in one dimension}\label{sec:example}
-
-Everything so far, on one equation. The three alternatives below change three different places in it:
-the right-hand side, the zeroth-order term, and the leading (second-order) term.
+\subsection{Back to the aquifer, in one dimension}\label{sec:aquifer}
 
 Discretize $-(Ku')'+\kappa^2(x)u=q$ on $N$ interior nodes with spacing $h=1/(N+1)$, with $K$ evaluated
 at cell faces. This gives a tridiagonal $A$ with $Au=q$. With discrete white noise
@@ -368,54 +364,54 @@ Choosing the square root $\Sigma_0^{1/2}=h^{-1/2}A_0^{-1}$ gives
 I+T=\Sigma_0^{-1/2}\Sigma_1\Sigma_0^{-\top/2}=B B^\top,\qquad B=A_0A_1^{-1},
 \]
 so the eigenvalues of $T$ are the squared singular values of $A_0A_1^{-1}$ minus one. The
-reference is $K\equiv1$, $\kappa^2\equiv36$. The three alternatives are:
+reference is $K\equiv1$, $\kappa^2\equiv36$. The three truths are:
 
 \begin{center}
 \begin{tabular}{lll}
 \toprule
-alternative & change & place in the equation \\
+truth & change & place in the equation \\
 \midrule
-source & $q=\xi+a\,g$, $a\sim\N(0,50)$, $g$ a smooth bump with $\int g^2=1$ & right-hand side \\
-bump in $\kappa^2$ & $\kappa^2(x)=36-30\,e^{-((x-0.75)/0.06)^2}$ & zeroth-order term \\
-inclusion in $K$ & $K(x)=e^{b(x)}$, $b\approx1$ on $[0.4,0.6]$ & leading term \\
+well & $q=\xi+a\,g$, $a\sim\N(0,50)$, $g$ a smooth bump with $\int g^2=1$ & source \\
+leakage & $\kappa^2(x)=36-30\,e^{-((x-0.75)/0.06)^2}$ & zeroth order \\
+lens & $K(x)=e^{b(x)}$, $b\approx1$ on $[0.4,0.6]$ & principal part \\
 \bottomrule
 \end{tabular}
 \end{center}
 
 \begin{figure}[ht]\centering
-\includegraphics[width=\linewidth]{fh07_1d_setup.pdf}
-\caption{Top: the three departures. Bottom: one sample under the reference (grey) and under
-each alternative (colour), all from the same white noise.}
-\label{fig:ex-setup}
+\includegraphics[width=\linewidth]{fh07_aquifer_1d_setup.pdf}
+\caption{Top: the three departures. Bottom: one head sample under the reference (grey) and under
+each truth (colour), all from the same white noise.}
+\label{fig:aq-setup}
 \end{figure}
 
 \paragraph{What to expect.}
 \begin{itemize}
-\item The \textbf{source} adds the rank-one term $c\,A_0^{-1}gg^\top A_0^{-\top}$. In whitened
+\item The \textbf{well} adds the rank-one term $c\,A_0^{-1}gg^\top A_0^{-\top}$. In whitened
 coordinates this is a single eigenvalue $t=c\,h\,g^\top g\approx c\int g^2=50$ and zeros elsewhere.
 That is trivially Hilbert--Schmidt: equivalent.
-\item The \textbf{bump in $\kappa^2$} perturbs the operator by a bounded multiplication, $\delta\kappa^2$,
+\item The \textbf{leakage} change perturbs the operator by a bounded multiplication, $\delta\kappa^2$,
 which is lower order than $-\partial_x^2$. Whitened, it behaves like $(\kappa^2-\partial_x^2)^{-1}$
 times something bounded, so $t_j\sim1/\lambda_j$: Hilbert--Schmidt in $d\le3$. Equivalent.
-\item The \textbf{inclusion in $K$} changes the highest-order term. At fine scales $A_1\approx-\partial_x K\partial_x$
+\item The \textbf{lens} changes the highest-order term. At fine scales $A_1\approx-\partial_x K\partial_x$
 and $A_0\approx-\partial_x^2$, so $BB^\top$ acts locally like multiplication by $K(x)^{-2}$, and
 $T$ like multiplication by $K^{-2}-1$. A multiplication operator is not compact. A fixed
-\emph{fraction} of all $N$ eigenvalues (the fraction of the domain covered by the inclusion) sits near
+\emph{fraction} of all $N$ eigenvalues (the fraction of the domain covered by the lens) sits near
 $e^{-2}-1\approx-0.86$, so $\|T\|_F^2\propto N$. Singular.
 \end{itemize}
 
 \begin{figure}[ht]\centering
-\includegraphics[width=\linewidth]{fh08_1d_refinement.pdf}
-\caption{(a) $\|T\|_F$ and (b) $\KL$ under mesh refinement. The source and the $\kappa^2$ bump are flat; the
-inclusion grows like $\sqrt N$ and $N$. (c) All eigenvalues of $T$ at $N=1024$: about 20\% of them sit
+\includegraphics[width=\linewidth]{fh08_aquifer_refinement.pdf}
+\caption{(a) $\|T\|_F$ and (b) $\KL$ under mesh refinement. The well and the leakage are flat; the
+lens grows like $\sqrt N$ and $N$. (c) All eigenvalues of $T$ at $N=1024$: about 20\% of them sit
 at the symbol value $K^{-2}-1$.}
-\label{fig:ex-ref}
+\label{fig:aq-ref}
 \end{figure}
 
 \begin{center}
 \begin{tabular}{rccc}
 \toprule
-$N$ & source & $\kappa^2$ bump & inclusion \\
+$N$ & well & leakage & lens \\
 \midrule
 32 & 50.00 & 0.638 & 2.34 \\
 128 & 50.00 & 0.635 & 4.46 \\
@@ -425,29 +421,30 @@ $N$ & source & $\kappa^2$ bump & inclusion \\
 \end{tabular}
 
 \smallskip
-$\|T_N\|_F$ from the notebook. The inclusion grows by $\sqrt2$ per doubling of $N$.
+$\|T_N\|_F$ from the notebook. The lens grows by $\sqrt2$ per doubling of $N$.
 \end{center}
 
-\noindent In 2D, $N=n^2$, so $\|T\|_F\propto n$ and $\KL\propto n^2$, so on a 2D mesh the growth is faster still. Note the scale. The source has a \emph{much larger} $\|T\|_F$ (50) than the
-inclusion at any mesh shown here, yet it is the inclusion that is singular. As with the range change, what
+\noindent In 2D, $N=n^2$, so $\|T\|_F\propto n$ and $\KL\propto n^2$, which is exactly what the
+main project measured (F1). Note the scale. The well has a \emph{much larger} $\|T\|_F$ (50) than the
+lens at any mesh shown here, yet it is the lens that is singular. As with the range change, what
 matters is not the size of the departure but whether it reaches the fine scales.
 
-\paragraph{The one-sample test, again.}
-Repeat the experiment of Fig.~\ref{fig:iid} with these operators, using
+\paragraph{The one-sample test, for heads.}
+Repeat the experiment of Fig.~\ref{fig:iid} with real head fields, using
 \[
 \log\frac{d\mu_1}{d\mu_0}(u)=\log|A_1|-\log|A_0|-\tfrac h2\big(\|A_1u\|^2-\|A_0u\|^2\big),
 \]
-and a Woodbury form for the source. Fig.~\ref{fig:ex-test} shows the result. For the source and the
-$\kappa^2$ bump the error of the best test does not change with $N$: a finer mesh gives no new evidence. For
-the inclusion the error drops to zero. A finely resolved sample carries its fingerprint in
+and a Woodbury form for the well. Fig.~\ref{fig:aq-test} shows the result. For the well and the
+leakage the error of the best test does not change with $N$: a finer mesh gives no new evidence. For
+the lens the error drops to zero. A finely resolved head field carries the lens's fingerprint in
 every small-scale wiggle.
 
 \begin{figure}[ht]\centering
-\includegraphics[width=\linewidth]{fh09_1d_one_sample_test.pdf}
-\caption{One-sample log likelihood ratio, reference versus alternative, at $N=64, 512, 4096$. The source
-(error $\approx0.13$) and the $\kappa^2$ bump (error $\approx0.44$) are stable: equivalent. The inclusion error is
+\includegraphics[width=\linewidth]{fh09_aquifer_one_sample_test.pdf}
+\caption{One-sample log likelihood ratio, reference versus truth, at $N=64, 512, 4096$. The well
+(error $\approx0.13$) and the leakage (error $\approx0.44$) are stable: equivalent. The lens error is
 $0.006\to0.000$: singular.}
-\label{fig:ex-test}
+\label{fig:aq-test}
 \end{figure}
 
 %----------------------------------------------------------------------
@@ -458,12 +455,10 @@ perfect sample cannot tell the measures apart.
 \item Diagonal case: equivalent iff $\sum t_j^2<\infty$ (variances) and $\sum m_j^2<\infty$ (means).
 Feldman--H\'ajek is the same statement without a basis: $T$ is Hilbert--Schmidt and the mean
 lies in the Cameron--Martin space.
-\item The decision is made at the \textbf{fine scales}. Large-scale changes (range $\kappa$, smooth sources,
-lower-order terms) are harmless however big they look. Changes that persist down to the smallest scales
-(amplitude $\tau$, the leading coefficient) are fatal however small they look.
-\item Size is not the criterion. In \S\ref{sec:example} the source has the largest $\|T\|_F$ of the
-three and is harmless; the inclusion in $K$ is smaller at every mesh shown and is singular.
-\item Practically: what a fine sample determines exactly ($\tau$, the leading coefficient $K$) cannot be ``corrected'' with
+\item The decision is made at the \textbf{fine scales}. Large-scale changes (range $\kappa$, wells,
+leakage) are harmless however big they look. Changes that persist down to the smallest scales
+(amplitude $\tau$, conductivity $K$) are fatal however small they look.
+\item Practically: what a fine sample determines exactly ($\tau$, $K$) cannot be ``corrected'' with
 finitely many directions, and what it never determines ($\kappa$) is a cheap knob a fit can slide
 along.
 \end{enumerate}
@@ -471,14 +466,15 @@ along.
 \begin{exercise}
 \begin{enumerate}
 \item Is $t_j=1/\sqrt j$ equivalent or singular? Compute $\sum t_j^2$.
-\item A constant diffusion coefficient $K\equiv2$: equivalent or singular? (Hint: $-\nabla\cdot(2\nabla u)+\kappa^2u=\xi$ is
+\item A constant conductivity $K\equiv2$: equivalent or singular? (Hint: $-\nabla\cdot(2\nabla u)+\kappa^2u=\xi$ is
 $2\big(\tfrac{\kappa^2}{2}-\Delta\big)u=\xi$. Which parameter of \S\ref{sec:range} changed?)
-\item A source shape $g$ must be in $L^2$, so that its response $(\kappa^2-\Delta)^{-1}g$ is in $H^2$. What happens to $t=c\,h\,g^\top g$ when $g$ becomes a delta at the grid scale ($g_i=1/h$ at one node)?
+\item The well's source shape $g$ must be in $L^2$, so that its head response $(\kappa^2-\Delta)^{-1}g$ is in $H^2$. What happens to $t=c\,h\,g^\top g$ when $g$ becomes a delta at the grid scale ($g_i=1/h$ at one node)?
 \end{enumerate}
 \end{exercise}
 
-\paragraph{Next chapter (planned).} Whitening and the operator $T$ in two dimensions, and the symbols of
-differential operators.
+\paragraph{Next chapter (planned).} Whitening and the operator $T$ in 2D; why the lens's $T$ is ``multiplication by
+$K^{-2}-1$'' (symbols of differential operators); then how the finite-rank model M3 sees $T$ through
+sample covariances (Marchenko--Pastur, BBP).
 
 \section*{References}
 \begin{itemize}\small
