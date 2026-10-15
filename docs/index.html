@@ -57,6 +57,7 @@ them apart. If one perfect sample can, they are <b>mutually singular</b>.</block
 <tr><td>Infinitely many coordinates</td><td>A 20% variance change in every coordinate becomes perfectly detectable from one sample; equivalence holds iff Σ t<sub>j</sub><sup>2</sup> &lt; ∞ (Kakutani).</td></tr>
 <tr><td>Mean shifts</td><td>Equivalent iff the shift lies in the Cameron–Martin space; for the SPDE prior that is H², so a point source is singular.</td></tr>
 <tr><td>Range vs amplitude</td><td>Changing the range κ looks dramatic but is equivalent; changing the amplitude τ looks mild but is singular. One sample pins τ, never κ.</td></tr>
+<tr><td>Worked example in 1D</td><td>An added source and a bump in the zeroth-order coefficient: ‖T‖ flat under refinement (equivalent). An inclusion in the leading coefficient K: ‖T‖ ∝ √N, and one sample identifies it (singular).</td></tr>
 </table>
 
 <figure>
@@ -66,6 +67,18 @@ them apart. If one perfect sample can, they are <b>mutually singular</b>.</block
 <figure>
   <img src="img/fh05_range_vs_amplitude.png" alt="Samples and spectra for range and amplitude changes">
   <figcaption>The range change (green) looks most different yet is equivalent; the amplitude change (orange) is singular because it persists at every fine scale.</figcaption>
+</figure>
+<figure>
+  <img src="img/fh07_1d_setup.png" alt="Three departures from the reference in one dimension and one sample under each">
+  <figcaption>One equation, three changes: a source on the right-hand side, a bump in the zeroth-order coefficient κ², and an inclusion in the leading coefficient K. Bottom: one sample under each, from the same noise.</figcaption>
+</figure>
+<figure>
+  <img src="img/fh08_1d_refinement.png" alt="Hilbert–Schmidt norm and KL under mesh refinement">
+  <figcaption>Under refinement the source and the κ² bump stay flat; the inclusion grows like √N, because a fixed fraction of all eigenvalues of T sit at K⁻² − 1. The source is the largest change of the three, yet it is harmless.</figcaption>
+</figure>
+<figure>
+  <img src="img/fh09_1d_one_sample_test.png" alt="One-sample likelihood-ratio histograms for the three changes">
+  <figcaption>One sample: the test error is stable under refinement for the source and the κ² bump (equivalent) and drops to zero for the inclusion in K (singular).</figcaption>
 </figure>
 
 <h2>Coming next</h2>

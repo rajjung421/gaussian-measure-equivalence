@@ -9,7 +9,7 @@ singular, with SPDE (Matérn-type) priors in mind. The guiding tool is the Feldm
 
 | Chapter | Notebook | Topic |
 |---|---|---|
-| 1 | [`01_feldman_hajek.ipynb`](01_feldman_hajek.ipynb) | Equivalent vs singular Gaussian measures; Kakutani's $\sum t_j^2$ condition; mean shifts and the Cameron–Martin space; range $\kappa$ vs amplitude $\tau$ (microergodicity) |
+| 1 | [`01_feldman_hajek.ipynb`](01_feldman_hajek.ipynb) | Equivalent vs singular Gaussian measures; Kakutani's $\sum t_j^2$ condition; mean shifts and the Cameron–Martin space; range $\kappa$ vs amplitude $\tau$ (microergodicity); a 1D worked example changing the source, a lower-order coefficient and the leading coefficient |
 
 The written notes are in [`notes.tex`](notes.tex) / [`notes.pdf`](notes.pdf); every figure in them is
 produced by the notebooks (saved to `figs/`).

@@ -53,7 +53,10 @@ you which of the two produced it. If one perfect sample \emph{can} tell them apa
 mutually singular.
 \end{intuition}
 
-Everything below builds toward this sentence and then checks it with numbers.
+Everything below builds toward this sentence and then checks it with numbers: finite dimensions first,
+then infinitely many coordinates, mean shifts, the theorem itself, random functions, and finally
+(\S\ref{sec:example}) one equation in which an added source, a lower-order coefficient and the leading
+coefficient are changed in turn, and the theorem sorts them.
 
 %----------------------------------------------------------------------
 \subsection{Equivalent and singular measures}
@@ -349,6 +352,105 @@ unbounded for $\tau$, bounded for $\kappa$.}
 cheap knob for a fit to turn.
 
 %----------------------------------------------------------------------
+\subsection{A worked example in one dimension}\label{sec:example}
+
+Everything so far, on one equation. The three alternatives below change three different places in it:
+the right-hand side, the zeroth-order term, and the leading (second-order) term.
+
+Discretize $-(Ku')'+\kappa^2(x)u=q$ on $N$ interior nodes with spacing $h=1/(N+1)$, with $K$ evaluated
+at cell faces. This gives a tridiagonal $A$ with $Au=q$. With discrete white noise
+$\xi_i\sim\N(0,1/h)$,
+\[
+\Sigma=h^{-1}A^{-1}A^{-\top},\qquad \text{precision } Q=h\,A^\top A .
+\]
+Choosing the square root $\Sigma_0^{1/2}=h^{-1/2}A_0^{-1}$ gives
+\[
+I+T=\Sigma_0^{-1/2}\Sigma_1\Sigma_0^{-\top/2}=B B^\top,\qquad B=A_0A_1^{-1},
+\]
+so the eigenvalues of $T$ are the squared singular values of $A_0A_1^{-1}$ minus one. The
+reference is $K\equiv1$, $\kappa^2\equiv36$. The three alternatives are:
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+alternative & change & place in the equation \\
+\midrule
+source & $q=\xi+a\,g$, $a\sim\N(0,50)$, $g$ a smooth bump with $\int g^2=1$ & right-hand side \\
+bump in $\kappa^2$ & $\kappa^2(x)=36-30\,e^{-((x-0.75)/0.06)^2}$ & zeroth-order term \\
+inclusion in $K$ & $K(x)=e^{b(x)}$, $b\approx1$ on $[0.4,0.6]$ & leading term \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{figure}[ht]\centering
+\includegraphics[width=\linewidth]{fh07_1d_setup.pdf}
+\caption{Top: the three departures. Bottom: one sample under the reference (grey) and under
+each alternative (colour), all from the same white noise.}
+\label{fig:ex-setup}
+\end{figure}
+
+\paragraph{What to expect.}
+\begin{itemize}
+\item The \textbf{source} adds the rank-one term $c\,A_0^{-1}gg^\top A_0^{-\top}$. In whitened
+coordinates this is a single eigenvalue $t=c\,h\,g^\top g\approx c\int g^2=50$ and zeros elsewhere.
+That is trivially Hilbert--Schmidt: equivalent.
+\item The \textbf{bump in $\kappa^2$} perturbs the operator by a bounded multiplication, $\delta\kappa^2$,
+which is lower order than $-\partial_x^2$. Whitened, it behaves like $(\kappa^2-\partial_x^2)^{-1}$
+times something bounded, so $t_j\sim1/\lambda_j$: Hilbert--Schmidt in $d\le3$. Equivalent.
+\item The \textbf{inclusion in $K$} changes the highest-order term. At fine scales $A_1\approx-\partial_x K\partial_x$
+and $A_0\approx-\partial_x^2$, so $BB^\top$ acts locally like multiplication by $K(x)^{-2}$, and
+$T$ like multiplication by $K^{-2}-1$. A multiplication operator is not compact. A fixed
+\emph{fraction} of all $N$ eigenvalues (the fraction of the domain covered by the inclusion) sits near
+$e^{-2}-1\approx-0.86$, so $\|T\|_F^2\propto N$. Singular.
+\end{itemize}
+
+\begin{figure}[ht]\centering
+\includegraphics[width=\linewidth]{fh08_1d_refinement.pdf}
+\caption{(a) $\|T\|_F$ and (b) $\KL$ under mesh refinement. The source and the $\kappa^2$ bump are flat; the
+inclusion grows like $\sqrt N$ and $N$. (c) All eigenvalues of $T$ at $N=1024$: about 20\% of them sit
+at the symbol value $K^{-2}-1$.}
+\label{fig:ex-ref}
+\end{figure}
+
+\begin{center}
+\begin{tabular}{rccc}
+\toprule
+$N$ & source & $\kappa^2$ bump & inclusion \\
+\midrule
+32 & 50.00 & 0.638 & 2.34 \\
+128 & 50.00 & 0.635 & 4.46 \\
+512 & 50.00 & 0.635 & 8.80 \\
+2048 & 50.00 & 0.635 & 17.52 \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+$\|T_N\|_F$ from the notebook. The inclusion grows by $\sqrt2$ per doubling of $N$.
+\end{center}
+
+\noindent In 2D, $N=n^2$, so $\|T\|_F\propto n$ and $\KL\propto n^2$, so on a 2D mesh the growth is faster still. Note the scale. The source has a \emph{much larger} $\|T\|_F$ (50) than the
+inclusion at any mesh shown here, yet it is the inclusion that is singular. As with the range change, what
+matters is not the size of the departure but whether it reaches the fine scales.
+
+\paragraph{The one-sample test, again.}
+Repeat the experiment of Fig.~\ref{fig:iid} with these operators, using
+\[
+\log\frac{d\mu_1}{d\mu_0}(u)=\log|A_1|-\log|A_0|-\tfrac h2\big(\|A_1u\|^2-\|A_0u\|^2\big),
+\]
+and a Woodbury form for the source. Fig.~\ref{fig:ex-test} shows the result. For the source and the
+$\kappa^2$ bump the error of the best test does not change with $N$: a finer mesh gives no new evidence. For
+the inclusion the error drops to zero. A finely resolved sample carries its fingerprint in
+every small-scale wiggle.
+
+\begin{figure}[ht]\centering
+\includegraphics[width=\linewidth]{fh09_1d_one_sample_test.pdf}
+\caption{One-sample log likelihood ratio, reference versus alternative, at $N=64, 512, 4096$. The source
+(error $\approx0.13$) and the $\kappa^2$ bump (error $\approx0.44$) are stable: equivalent. The inclusion error is
+$0.006\to0.000$: singular.}
+\label{fig:ex-test}
+\end{figure}
+
+%----------------------------------------------------------------------
 \subsection{Take-aways}
 \begin{enumerate}
 \item Equivalence means the same null sets, which means a density $dQ/dP$ exists, which means one
@@ -359,7 +461,9 @@ lies in the Cameron--Martin space.
 \item The decision is made at the \textbf{fine scales}. Large-scale changes (range $\kappa$, smooth sources,
 lower-order terms) are harmless however big they look. Changes that persist down to the smallest scales
 (amplitude $\tau$, the leading coefficient) are fatal however small they look.
-\item Practically: what a fine sample determines exactly ($\tau$) cannot be ``corrected'' with
+\item Size is not the criterion. In \S\ref{sec:example} the source has the largest $\|T\|_F$ of the
+three and is harmless; the inclusion in $K$ is smaller at every mesh shown and is singular.
+\item Practically: what a fine sample determines exactly ($\tau$, the leading coefficient $K$) cannot be ``corrected'' with
 finitely many directions, and what it never determines ($\kappa$) is a cheap knob a fit can slide
 along.
 \end{enumerate}
