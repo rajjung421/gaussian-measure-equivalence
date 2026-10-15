@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gaussian Measure Equivalence</title>
+<meta name="description" content="Computational learning notes on Feldman–Hájek, equivalent and singular Gaussian priors, and SPDE priors.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fcfcfb;--ink:#1a1a18;--ink2:#52514e;--muted:#8a8984;--rule:#e4e3df;--card:#ffffff;--accent:#2a78d6;--accent2:#eb6834}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141413;--ink:#ecebe7;--ink2:#b7b5ae;--muted:#85837c;--rule:#2e2d2a;--card:#1c1c1a;--accent:#6aa5ec;--accent2:#f08a5d}}
+:root[data-theme="dark"]{--bg:#141413;--ink:#ecebe7;--ink2:#b7b5ae;--muted:#85837c;--rule:#2e2d2a;--card:#1c1c1a;--accent:#6aa5ec;--accent2:#f08a5d}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 "Source Serif 4",Georgia,serif}
+main{max-width:860px;margin:0 auto;padding:48px 16px 80px}
+h1,h2,.meta,.btn,figcaption,table{font-family:Inter,system-ui,sans-serif}
+h1{font-size:2rem;line-height:1.2;margin:0 0 8px}
+h2{font-size:1.15rem;margin:44px 0 10px;padding-top:14px;border-top:1px solid var(--rule)}
+.meta{color:var(--muted);font-size:.9rem;margin-bottom:28px}
+.lede{font-size:1.15rem;color:var(--ink2)}
+blockquote{margin:24px 0;padding:14px 18px;border-left:3px solid var(--accent);background:var(--card);border-radius:4px}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0}
+.btn{display:inline-block;padding:9px 16px;border:1px solid var(--rule);border-radius:6px;background:var(--card);color:var(--ink);text-decoration:none;font-size:.92rem;font-weight:600}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+figure{margin:22px 0}
+figure img{width:100%;height:auto;border:1px solid var(--rule);border-radius:6px;background:#fcfcfb}
+figcaption{font-size:.85rem;color:var(--ink2);margin-top:6px}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{color:var(--muted);font-weight:600}
+a{color:var(--accent)}
+code{font-size:.9em}
+</style>
+</head>
+<body>
+<main>
+<h1>When is a Gaussian prior “the same kind of thing”?</h1>
+<div class="meta">Learning notes · Raj Mahat · Georgia Tech</div>
+
+<p class="lede">Computational notes on the Feldman–Hájek theorem: when two Gaussian priors are equivalent,
+when they are mutually singular, and what that means for SPDE (Matérn-type) priors under mesh refinement.</p>
+
+<blockquote>Two Gaussian measures are <b>equivalent</b> iff a single, infinitely resolved sample cannot tell
+them apart. If one perfect sample can, they are <b>mutually singular</b>.</blockquote>
+
+<div class="btns">
+  <a class="btn" href="notes.pdf">Read the notes (PDF)</a>
+  <a class="btn" href="01_feldman_hajek.html">Chapter 1 notebook</a>
+  <a class="btn" id="repo" href="#">Source on GitHub</a>
+</div>
+
+<h2>Chapter 1 · Feldman–Hájek and measure equivalence</h2>
+<table>
+<tr><th>Step</th><th>What the computation shows</th></tr>
+<tr><td>Finite dimensions</td><td>Non-degenerate Gaussians are always equivalent; singularity needs a degenerate support.</td></tr>
+<tr><td>Infinitely many coordinates</td><td>A 20% variance change in every coordinate becomes perfectly detectable from one sample; equivalence holds iff Σ t<sub>j</sub><sup>2</sup> &lt; ∞ (Kakutani).</td></tr>
+<tr><td>Mean shifts</td><td>Equivalent iff the shift lies in the Cameron–Martin space; for the SPDE prior that is H², so a point source is singular.</td></tr>
+<tr><td>Range vs amplitude</td><td>Changing the range κ looks dramatic but is equivalent; changing the amplitude τ looks mild but is singular. One sample pins τ, never κ.</td></tr>
+</table>
+
+<figure>
+  <img src="img/fh03_decay_kakutani.png" alt="Feldman–Hájek sum, Hellinger affinity and one-sample test error for three perturbation sequences">
+  <figcaption>Only the perturbation that decays fast enough (t<sub>j</sub> = 1/j) keeps a permanent overlap between P and Q.</figcaption>
+</figure>
+<figure>
+  <img src="img/fh05_range_vs_amplitude.png" alt="Samples and spectra for range and amplitude changes">
+  <figcaption>The range change (green) looks most different yet is equivalent; the amplitude change (orange) is singular because it persists at every fine scale.</figcaption>
+</figure>
+
+<h2>Coming next</h2>
+<p>Whitening and the operator T in two dimensions; symbols of differential operators; centred vs non-centred MCMC.</p>
+</main>
+<script>
+// point the "Source" button at this repo when served from <user>.github.io/<repo>/
+try{const h=location.hostname,p=location.pathname.split('/').filter(Boolean);
+if(h.endsWith('github.io')&&p.length){document.getElementById('repo').href=`https://github.com/${h.split('.')[0]}/${p[0]}`}}catch(e){}
+</script>
+</body>
+</html>

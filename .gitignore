@@ -1,0 +1,12 @@
+# LaTeX build products (notes.pdf is kept)
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+# Python / Jupyter
+__pycache__/
+.ipynb_checkpoints/
+.venv/
