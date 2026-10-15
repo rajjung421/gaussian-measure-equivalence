@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Gaussian Measure Equivalence</title>
-<meta name="description" content="Computational learning notes on Feldman–Hájek, equivalent and singular Gaussian priors, and SPDE priors.">
+<meta name="description" content="Computational learning notes on Feldman–Hájek, equivalent and singular Gaussian priors, and a leaky-aquifer SPDE example.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -38,8 +38,9 @@ code{font-size:.9em}
 <h1>When is a Gaussian prior “the same kind of thing”?</h1>
 <div class="meta">Learning notes · Raj Mahat · Georgia Tech</div>
 
-<p class="lede">Computational notes on the Feldman–Hájek theorem: when two Gaussian priors are equivalent,
-when they are mutually singular, and what that means for SPDE (Matérn-type) priors under mesh refinement.</p>
+<p class="lede">Computational notes on the Feldman–Hájek theorem and what it means for building priors
+for groundwater heads: which nonstationary features (wells, leakage, a conductivity lens) can be added as a
+correction to a stationary SPDE prior, and which force the operator itself to change.</p>
 
 <blockquote>Two Gaussian measures are <b>equivalent</b> iff a single, infinitely resolved sample cannot tell
 them apart. If one perfect sample can, they are <b>mutually singular</b>.</blockquote>
@@ -55,9 +56,9 @@ them apart. If one perfect sample can, they are <b>mutually singular</b>.</block
 <tr><th>Step</th><th>What the computation shows</th></tr>
 <tr><td>Finite dimensions</td><td>Non-degenerate Gaussians are always equivalent; singularity needs a degenerate support.</td></tr>
 <tr><td>Infinitely many coordinates</td><td>A 20% variance change in every coordinate becomes perfectly detectable from one sample; equivalence holds iff Σ t<sub>j</sub><sup>2</sup> &lt; ∞ (Kakutani).</td></tr>
-<tr><td>Mean shifts</td><td>Equivalent iff the shift lies in the Cameron–Martin space; for the SPDE prior that is H², so a point source is singular.</td></tr>
+<tr><td>Mean shifts</td><td>Equivalent iff the shift lies in the Cameron–Martin space; for the SPDE prior that is H², so a point well is singular.</td></tr>
 <tr><td>Range vs amplitude</td><td>Changing the range κ looks dramatic but is equivalent; changing the amplitude τ looks mild but is singular. One sample pins τ, never κ.</td></tr>
-<tr><td>Worked example in 1D</td><td>An added source and a bump in the zeroth-order coefficient: ‖T‖ flat under refinement (equivalent). An inclusion in the leading coefficient K: ‖T‖ ∝ √N, and one sample identifies it (singular).</td></tr>
+<tr><td>1D leaky aquifer</td><td>Well and leakage: ‖T‖ flat under refinement. Conductivity lens: ‖T‖ ∝ √N, and one head field identifies it.</td></tr>
 </table>
 
 <figure>
@@ -69,20 +70,13 @@ them apart. If one perfect sample can, they are <b>mutually singular</b>.</block
   <figcaption>The range change (green) looks most different yet is equivalent; the amplitude change (orange) is singular because it persists at every fine scale.</figcaption>
 </figure>
 <figure>
-  <img src="img/fh07_1d_setup.png" alt="Three departures from the reference in one dimension and one sample under each">
-  <figcaption>One equation, three changes: a source on the right-hand side, a bump in the zeroth-order coefficient κ², and an inclusion in the leading coefficient K. Bottom: one sample under each, from the same noise.</figcaption>
-</figure>
-<figure>
-  <img src="img/fh08_1d_refinement.png" alt="Hilbert–Schmidt norm and KL under mesh refinement">
-  <figcaption>Under refinement the source and the κ² bump stay flat; the inclusion grows like √N, because a fixed fraction of all eigenvalues of T sit at K⁻² − 1. The source is the largest change of the three, yet it is harmless.</figcaption>
-</figure>
-<figure>
-  <img src="img/fh09_1d_one_sample_test.png" alt="One-sample likelihood-ratio histograms for the three changes">
-  <figcaption>One sample: the test error is stable under refinement for the source and the κ² bump (equivalent) and drops to zero for the inclusion in K (singular).</figcaption>
+  <img src="img/fh09_aquifer_one_sample_test.png" alt="One-sample likelihood-ratio histograms for well, leakage and lens">
+  <figcaption>One head field: test error is stable under refinement for the well and leakage (equivalent) and drops to zero for the lens (singular).</figcaption>
 </figure>
 
 <h2>Coming next</h2>
-<p>Whitening and the operator T in two dimensions; symbols of differential operators; centred vs non-centred MCMC.</p>
+<p>Whitening and the operator T in 2D; why a conductivity lens acts as multiplication by K⁻² − 1; how a
+finite-rank model sees T through sample covariances (Marchenko–Pastur, BBP); centred vs non-centred MCMC.</p>
 </main>
 <script>
 // point the "Source" button at this repo when served from <user>.github.io/<repo>/
